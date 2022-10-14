@@ -4,7 +4,7 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 ![Screenshot of the script running in Visual Studio Code](https://user-images.githubusercontent.com/5067358/195956233-feac7ab6-0a9f-437c-8473-8fa2752c5df1.png)
 
 
-## Gather maintenance data about our articles
+## Gather maintenance data about content assets
 
 1. Open the Content Engagement Report [http://aka.ms/contentengagementreport](http://aka.ms/contentengagementreport)
 
@@ -16,9 +16,13 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 5. Unblock the downloaded file: From Windows Explorer, right-click on the file, choose **properties**, select **unblock**, and **apply**).
 
-6. Edit the Excel worksheet to include only the rows you want to make work items for. Delete any extra rows you don't want items for. Leave the column headers. Adjust the width of any narrow columns in Excel that block the data with `######` and leave extra white space for best results.
+6. Edit the Excel worksheet to keep the rows you want to make work items for, removing any unwanted data.
 
-7. Close the Excel file.
+   - Delete any extra rows you don't want to create items for. For example, you may want to prioritize 1000+ page views data and remove the rest.
+   - Leave the column headers in tact, since the script will parse those dynamically.
+   - Adjust the width of any narrow columns in Excel that are hiding the data with `######` and leave a buffer of extra white space on those columns for best results.
+
+7. Save and close the Excel file.
 
 ## Run the PowerShell script
 
