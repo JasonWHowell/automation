@@ -1,6 +1,8 @@
 # Create Azure DevOps workitems from a Excel worksheet
 
 This PowerShell script  automates entering maintenance items into our Azure DevOps boards.
+![Screenshot of the script running in Visual Studio Code](https://user-images.githubusercontent.com/5067358/195956233-feac7ab6-0a9f-437c-8473-8fa2752c5df1.png)
+
 
 ## Gather maintenance data about our articles
 
