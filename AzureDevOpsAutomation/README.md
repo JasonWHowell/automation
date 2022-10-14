@@ -26,6 +26,8 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 2. Launch **Windows PowerShell ISE** or **Visual Studio Code** IDE from the Start menu. Open the script file.
 
+   You may need to install the Code [Extension for PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) to run it interactively
+
 3. Edit the string parameters at the top of the script to customize to your liking.
 
 4. Play the script to parse the Excel file and create work items automatically. Review the Output window to see the progress or any error messages that appear.
