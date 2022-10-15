@@ -80,5 +80,5 @@ Note:  Creating tags in the ADO instance requires additional permissions that ma
 
 4. Data appears as `#####` symbols in the ADO item when the source column in Excel was too narrow to parse. You can expand the column width to include extra whitespace, save the Excel file, close the file, and try the import again.
 
-![image](https://user-images.githubusercontent.com/5067358/195960464-7f4bb326-a5ea-43fa-9b92-b4c76788f54f.png)
+   ![image](https://user-images.githubusercontent.com/5067358/195960464-7f4bb326-a5ea-43fa-9b92-b4c76788f54f.png)
 
