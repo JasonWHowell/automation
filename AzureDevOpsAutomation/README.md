@@ -1,8 +1,9 @@
 # Create Azure DevOps workitems from a Excel worksheet
 
 This PowerShell script  automates entering maintenance items into our Azure DevOps boards.
+![Screenshot of the script running in Visual Studio Code](https://user-images.githubusercontent.com/5067358/195956233-feac7ab6-0a9f-437c-8473-8fa2752c5df1.png)
 
-## Gather maintenance data about our articles
+## Gather maintenance data about content assets
 
 1. Open the Content Engagement Report [http://aka.ms/contentengagementreport](http://aka.ms/contentengagementreport)
 
@@ -14,15 +15,21 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 5. Unblock the downloaded file: From Windows Explorer, right-click on the file, choose **properties**, select **unblock**, and **apply**).
 
-6. Edit the Excel worksheet to include only the rows you want to make work items for. Delete any extra rows you don't want items for. Leave the column headers. 
+6. Edit the Excel worksheet to keep the rows you want to make work items for, removing any unwanted data.
 
-7. Close the Excel file.
+   - Delete any extra rows you don't want to create items for. For example, you may want to prioritize 1000+ page views data and remove the rest.
+   - Leave the column headers in tact, since the script will parse those dynamically.
+   - Adjust the width of any narrow columns in Excel that are hiding the data with `######` and leave a buffer of extra white space on those columns for best results.
+
+7. Save and close the Excel file.
 
 ## Run the PowerShell script
 
 1. Download the script and make sure the file name has the .ps1 extension.
 
 2. Launch **Windows PowerShell ISE** or **Visual Studio Code** IDE from the Start menu. Open the script file.
+
+   You may need to install the Code [Extension for PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) to run it interactively
 
 3. Edit the string parameters at the top of the script to customize to your liking. Set the mode to do freshness or content engagement settings.
 
@@ -69,3 +76,5 @@ Note:  Creating tags in the ADO instance requires additional permissions that ma
    ```
 
 4. Data appears as `#####` symbols in the ADO item when the source column in Excel was too narrow to parse. The script attempts to resize the columns to make it fit. You can expand the column width to include extra whitespace, save the Excel file, close the file, and try the import again.
+
+   ![image](https://user-images.githubusercontent.com/5067358/195960464-7f4bb326-a5ea-43fa-9b92-b4c76788f54f.png)
