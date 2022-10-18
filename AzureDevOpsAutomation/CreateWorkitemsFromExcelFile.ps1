@@ -18,16 +18,24 @@
 # File 1: Microsoft.TeamFoundation.WorkItemTracking.Client.dll
 # File 2: Microsoft.TeamFoundation.Client.dll
 
-# ADO values for Content Engagement:
-[array]$tags = @('content-engagement','Scripted')
-[string]$defaultDescription = "This auto-generated item was created to improve Content Engagement for URL: <br/>"
-[string]$defaultTitle= "Improve engagement: "
+## Set mode to help set the fields that are saved into the workitems
+[string]$mode="engagement"  # or "freshness"
 
-# ADO Values for Freshness:
-# Uncommented these if you want to do freshness
-#[array]$tags = @('content-health','Scripted')
-#[string]$defaultDescription = "This auto-generated item was created to track a freshness review for URL: <br/>"
-#[string]$defaultTitle= "Freshness:  "
+# ADO values for Content Engagement:
+if ($mode -ceq "engagement") #leave this line alone
+{
+[array]$tags = @('content-engagement','Scripted')
+[string]$defaultDescription = "This auto-generated item was created to improve content engagement. Review <a href='https://review.learn.microsoft.com/en-us/help/contribute/troubleshoot-underperforming-articles?branch=main'>Troubleshoot lower-engaging articles</a> for tips. <br/><br/>The learn URL to improve is: "
+[string]$defaultTitle= "Improve engagement: "
+}
+
+#ADO Values for Freshness:
+if ($mode -ceq "freshness")  #leave this line alone
+{
+[array]$tags = @('content-health','Scripted')
+[string]$defaultDescription = "This auto-generated item was created to track a Freshness review. Review <a href='https://review.learn.microsoft.com/en-us/help/contribute/freshness?branch=main'>the freshness contributor guide page</a> for tips. <br/><br/>The learn URL to freshen up is: "
+[string]$defaultTitle= "Freshness:  "
+}
 
 #### ONLY CODE AFTER HERE
 Write-Host "Script started." -ForegroundColor Cyan
@@ -39,7 +47,6 @@ if (Get-Module -ListAvailable -Name "Az.Accounts") {
     if (!$context)  { 
         Write-Host "Please sign in following the popup dialogue..."
         Connect-AzAccount 
-        
     } 
     else  { Write-Host "   Already signed in as $($context.Account.Id). Run Disconnect-AzAccount if you need to log out." -ForegroundColor Green  }
 } 
@@ -53,6 +60,7 @@ else {
 try{
     $Excel = New-Object -ComObject Excel.Application 
 
+    Write-Host "Trying to open Excel file. If the script hangs, minimize PowerShell and check for popup messages in Excel." -ForegroundColor Cyan
     # Open the Excel file
     $Workbook = $Excel.Workbooks.Open($ExcelFile)
    
@@ -68,6 +76,7 @@ try{
         $sheet = $workbook.Sheets.Item($sheetName)
         Write-Host "Opened Excel workbook named:" $sheetName
     
+        $sheet.Columns.AutoFit();
 
         Write-Host "Started parsing header columns." -ForegroundColor Cyan
         ## Header parsing loop to discover column header names
@@ -131,6 +140,7 @@ catch
     Write-Host "Couldn't parse the Excel file" 
     Write-Host $_
     Write-Host $_.ScriptStackTrace
+    Exit
 }
 finally 
 {
@@ -161,18 +171,29 @@ try{
         # customize which fields you want in the short table
         [string]$description = ""
         $description += $defaultDescription
-        $description += "<a href={0} target=_new>{0}</a><br/>" -f $row["Url"] 
+        $description += "<br/><a href={0} target=_new>{0}</a><br/>" -f $row["Url"] 
         $description += "<table style='border: 1px solid black; border-collapse: collapse;'>"
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Engagement</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Engagement"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Flags</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Flags"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>BounceRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["BounceRate"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>ClickThroughRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["ClickThroughRate"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>CopyTryScrollRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["CopyTryScrollRate"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Freshness</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Freshness"]
-        $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>LastReviewed</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["LastReviewed"]
+
+        if ($mode -ceq "freshness")
+        {
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Freshness</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Freshness"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>LastReviewed</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["LastReviewed"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>MSAuthor</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["MSAuthor"]
+        }
+        if ($mode -ceq "engagement")
+        {
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Engagement</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Engagement"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Flags</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Flags"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>BounceRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["BounceRate"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>ClickThroughRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["ClickThroughRate"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>CopyTryScrollRate</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["CopyTryScrollRate"] 
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Freshness</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Freshness"]
+            $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>LastReviewed</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["LastReviewed"]
+        }
+
         $description += "</table><br/>"
 
-        $description += "Other fields:<br/>"
+        $description += "Other page properties:<br/>"
         $description += "<table style='border: 1px solid black; border-collapse: collapse;'>"
 
         # Loop over all fields in the row to create the additional detailed table. Sorted alphabetically for now.
