@@ -1,4 +1,7 @@
-﻿# Excel file name and sheet name
+﻿# this is to let the file run on your computer because its not digitally signed. 
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# Excel file name and sheet name
 # Be sure to close the Excel file before running the script
 # Watch for background popups from Excel if errors occur. Minimize the window to see them.
 [string]$ExcelFile= 'C:\Users\jasonh\OneDrive - Microsoft\Desktop\Oct 2022.xlsx'
@@ -74,8 +77,9 @@ try{
     foreach($sheetName in $sheetNames)
     {
         $sheet = $workbook.Sheets.Item($sheetName)
-        Write-Host "Opened Excel workbook named:" $sheetName
+        Write-Host "Opened Excel file: $($ExcelFile)  Workbook: $($sheetName)" -ForegroundColor Cyan
     
+        Write-Host "Resizing columns to make the data fit..."  -ForegroundColor Cyan
         $sheet.Columns.AutoFit();
 
         Write-Host "Started parsing header columns." -ForegroundColor Cyan
