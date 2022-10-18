@@ -14,7 +14,7 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 5. Unblock the downloaded file: From Windows Explorer, right-click on the file, choose **properties**, select **unblock**, and **apply**).
 
-6. Edit the Excel worksheet to include only the rows you want to make work items for. Delete any extra rows you don't want items for. Leave the column headers. Adjust the width of any narrow columns in Excel that block the data with `######` and leave extra white space for best results.
+6. Edit the Excel worksheet to include only the rows you want to make work items for. Delete any extra rows you don't want items for. Leave the column headers. 
 
 7. Close the Excel file.
 
@@ -24,7 +24,7 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 2. Launch **Windows PowerShell ISE** or **Visual Studio Code** IDE from the Start menu. Open the script file.
 
-3. Edit the string parameters at the top of the script to customize to your liking.
+3. Edit the string parameters at the top of the script to customize to your liking. Set the mode to do freshness or content engagement settings.
 
 4. Play the script to parse the Excel file and create work items automatically. Review the Output window to see the progress or any error messages that appear.
 
@@ -39,17 +39,15 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
    - Microsoft.TeamFoundation.Client.dll
 
 2. The script prompts you to log in with your Azure credentials.
-Note:  Creating tags in the ADO instance requires additional permissions that may cause a failure if you add new tags that are not yet in the system. 
+Note:  Creating tags in the ADO instance requires additional permissions that may cause a failure if you add new tags that are not yet in the system.
 
 ## Wishlist to-do
 
-1. Resize fields in Excel automatically to avoid dates with `######` as the value
+1. Add color coding to the low engagement fields. Its hard to do since the current Excel export doesn't include colors or an indicator of what high and low engagement is.
 
-2. Add color coding to the low engagement fields. Its hard to do since the current Excel export doesn't include colors or an indicator of what high and low engagement is.
+2. Detect duplicate items that already exist in DevOps and skip creating those.
 
-3. Detect duplicate items that already exist in DevOps and skip creating those.
-
-4. Assign the new maintenance items to article ms.author value (optional)
+3. Assign the new maintenance items to article ms.author value (optional)
 
 ## Known issues
 
@@ -57,7 +55,7 @@ Note:  Creating tags in the ADO instance requires additional permissions that ma
 
    `Install-Module -Name Az -Scope CurrentUser -Repository PSGallery`
 
-2. If there is an authentication failure you'll get this error. You need to connect to Azure succesfully.
+2. If there is an authentication failure you'll get this error. You need to connect to Azure successfully using cmdlet Get-AzContext.
 
    ```output
    Exception calling "GetService" with "1" argument(s): "TF30063: You are not authorized to access https://msft-skilling.visualstudio.com/."  at <ScriptBlock>, C:\Downloads\CreateWorkitemsFromExcelFile.ps1: line 128
@@ -70,4 +68,4 @@ Note:  Creating tags in the ADO instance requires additional permissions that ma
    Exception calling "GetTeamProjectCollection" with "1" argument(s): "Could not load type 'System.Diagnostics.Eventing.EventProvider' from assembly 'System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'."
    ```
 
-4. Data appears as `#####` symbols in the ADO item when the source column in Excel was too narrow to parse. You can expand the column width to include extra whitespace, save the Excel file, close the file, and try the import again.
+4. Data appears as `#####` symbols in the ADO item when the source column in Excel was too narrow to parse. The script attempts to resize the columns to make it fit. You can expand the column width to include extra whitespace, save the Excel file, close the file, and try the import again.
