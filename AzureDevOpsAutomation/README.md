@@ -31,11 +31,16 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
    You may need to install the Code [Extension for PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) to run it interactively
 
-3. Edit the string parameters at the top of the script to customize to your liking. Set the mode to do freshness or content engagement settings.
+3. From the terminal, run the following command so that the script isn't blocked from executing.
 
-4. Play the script to parse the Excel file and create work items automatically. Review the Output window to see the progress or any error messages that appear.
+   # this is to let the file run on your computer because its not digitally signed. 
+   `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
-5. After it runs, a browser window should launch to help you find the newly created work items, or you can review the output window for a list of the created items and their ID numbers.
+4. Edit the string parameters at the top of the script to customize to your liking. Set the mode to do freshness or content engagement settings.
+
+5. Play the script to parse the Excel file and create work items automatically. Review the Output window to see the progress or any error messages that appear.
+
+6. After it runs, a browser window should launch to help you find the newly created work items, or you can review the output window for a list of the created items and their ID numbers.
 
 ## Prerequisites
 
