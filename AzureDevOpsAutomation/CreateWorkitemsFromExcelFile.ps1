@@ -1,4 +1,4 @@
-﻿# this is to let the file run on your computer because its not digitally signed. 
+# this is to let the file run on your computer because its not digitally signed. 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 # Excel file name and sheet name
