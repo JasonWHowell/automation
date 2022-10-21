@@ -33,7 +33,6 @@ This PowerShell script  automates entering maintenance items into our Azure DevO
 
 3. From the terminal, run the following command so that the script isn't blocked from executing.
 
-   # this is to let the file run on your computer because its not digitally signed. 
    `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
 4. Edit the string parameters at the top of the script to customize to your liking. Set the mode to do freshness or content engagement settings.
