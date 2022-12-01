@@ -4,17 +4,21 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # Excel file name and sheet name
 # Be sure to close the Excel file before running the script
 # Watch for background popups from Excel if errors occur. Minimize the window to see them.
-[string]$ExcelFile= 'C:\Users\jasonh\OneDrive - Microsoft\Desktop\Oct 2022.xlsx'
+[string]$ExcelFile= 'C:\Users\jasonh\Downloads\CMBFreshness2022Nov.xlsx'
 [string]$sheetNames = @("Export")
 
 # ADO parameters:
 [string]$ADOUrl= "https://msft-skilling.visualstudio.com/"
 [string]$projectName= "Content"
 [string]$itemType="User Story"
-[string]$areapath='Content\Production\Data and AI\Big Data, Commerce\'
-[string]$iterationpath="Content"
+[string]$areapath='Content\Production\Data and AI\Big Data, Commerce\Commerce\Cost Management Billing'
+[string]$iterationpath="Content\Zinc\CY22Q4\Monthly\Dec"
 [string]$assignee='Jason Howell ☘️'
-[string]$parentItem="2919" #the ADO parent feature to link the new items to. Empty string if there is none.
+[string]$parentItem="1234" #the ADO parent feature to link the new items to. Empty string if there is none.
+[string]$modality="Documentation"
+[string]$resourceType="Technical Writer"
+[string]$proposalType="Update"
+[string]$storyPoints="1"
 
 ## Locate the Visual Studio install on your PC
 [string]$dllpath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer"
@@ -22,7 +26,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # File 2: Microsoft.TeamFoundation.Client.dll
 
 ## Set mode to help set the fields that are saved into the workitems
-[string]$mode="engagement"  # or "freshness"
+[string]$mode="freshness"  # or "freshness"
 
 # ADO values for Content Engagement:
 if ($mode -ceq "engagement") #leave this line alone
@@ -30,6 +34,7 @@ if ($mode -ceq "engagement") #leave this line alone
 [array]$tags = @('content-engagement','Scripted')
 [string]$defaultDescription = "This auto-generated item was created to improve content engagement. Review <a href='https://review.learn.microsoft.com/en-us/help/contribute/troubleshoot-underperforming-articles?branch=main'>Troubleshoot lower-engaging articles</a> for tips. <br/><br/>The learn URL to improve is: "
 [string]$defaultTitle= "Improve engagement: "
+[string]$acceptanceCriteria = "The page content is changed to improve user engagement."
 }
 
 #ADO Values for Freshness:
@@ -38,6 +43,7 @@ if ($mode -ceq "freshness")  #leave this line alone
 [array]$tags = @('content-health','Scripted')
 [string]$defaultDescription = "This auto-generated item was created to track a Freshness review. Review <a href='https://review.learn.microsoft.com/en-us/help/contribute/freshness?branch=main'>the freshness contributor guide page</a> for tips. <br/><br/>The learn URL to freshen up is: "
 [string]$defaultTitle= "Freshness:  "
+[string]$acceptanceCriteria = "The page content is made current and accurate. The page metadata updated with the current ms.date."
 }
 
 #### ONLY CODE AFTER HERE
@@ -148,7 +154,9 @@ catch
 }
 finally 
 {
+    Write-Host "Trying to close the Excel file. If the script hangs, minimize PowerShell and check for popup messages in Excel." -ForegroundColor Cyan
     $Excel.Workbooks.Close()
+    Write-Host "Excel file closed." -ForegroundColor Green
 }
 
 try{
@@ -174,6 +182,7 @@ try{
 
         # customize which fields you want in the short table
         [string]$description = ""
+
         $description += $defaultDescription
         $description += "<br/><a href={0} target=_new>{0}</a><br/>" -f $row["Url"] 
         $description += "<table style='border: 1px solid black; border-collapse: collapse;'>"
@@ -183,6 +192,7 @@ try{
             $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>Freshness</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["Freshness"]
             $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>LastReviewed</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["LastReviewed"]
             $description += "<tr><td align='right' style='border: 1px solid black; border-collapse: collapse;'><strong>MSAuthor</strong></td><td align='left' style='border: 1px solid black; border-collapse: collapse;'> {0}</td></tr>" -f $row["MSAuthor"]
+
         }
         if ($mode -ceq "engagement")
         {
@@ -234,6 +244,11 @@ try{
         $item.Tags = ($tags |Select-Object) -join ","
         $item.Description = $description
         $item.Fields['Assigned To'].Value = $assignee
+        $item.Fields['Acceptance Criteria'].Value = $acceptanceCriteria
+        $item.Fields['Modality'].Value = $modality
+        $item.Fields['Resource Type'].Value = $resourceType
+        $item.Fields['Proposal Type'].Value = $proposalType
+        $item.Fields['Story Points'].Value = $storyPoints
         $item.save()
 
         # Link to a parent item if there's a number to link to
@@ -262,10 +277,12 @@ catch
     Write-Host "Couldn't create the AzureDevOps items." 
     Write-Host $_
     Write-Host $_.ScriptStackTrace
+    Write-Host "Last workitem was:"
+    $item | Select-Object Id,AreaPath,IterationPath,@{n='AssignedTo';e={$_.Fields['Assigned To'].Value}},Title, Tags, Description
+    Write-Host "Error occurred. Check above for any errors." -ForegroundColor Red
 }
 finally
 {
-    Write-Host "Done!" -ForegroundColor Green
-
+    Write-Host "Done." -ForegroundColor Green
 }
     
